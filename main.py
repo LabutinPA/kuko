@@ -1,11 +1,44 @@
 #!/usr/bin/env python3
+import functools
 
 
-file = open('test.mp3', 'rb')
-# This should create a bytes immutable object
-bytes_ = file.read()
-# How long is the file?
-print(len(bytes_))
+def byte_to_bit(byte):
+    """Converts an integer byte to a list of bits
+    4 -> [0, 0, 0, 0, 0, 1, 0, 0]
+    Args:
+        byte (int): Value should be :math:`\in [0, 255]`.
+    Returns:
+        list of (int): The bits of the given byte.
+        e.g. [0, 0, 0, 0, 0, 1, 0, 0]
+    Raises:
+        AssertionError: If byte is outside of :math:`[0,255]`
+    """
+    # TODO: Consider using list of boolean values instead for optimisation
+    assert byte <= 255 and byte >= 0
+    answer = []
+    while(byte > 0):
+        answer.append(byte % 2)
+        byte //= 2
+    # pad answer
+    while(len(answer) < 8):
+        answer.append(0)
+    answer.reverse()
+    return answer
+
+
+def bytes_to_bits(bytes_):
+    """Converts a byte stream to a list of bits
+    bytes([4]) -> [0, 0, 0, 0, 0, 1, 0, 0]
+    Args:
+        bytes_ (bytes): A bytes stream
+    Returns:
+        list of (int): The bits of the given bytes stream.
+        e.g. [0, 0, 0, 0, 0, 1, 0, 0]
+    Raises:
+        AssertionError: If byte is outside of :math:`[0,255]`
+    """
+    # TODO: Use list comprehension
+    return functools.reduce(list.__add__, list(map(byte_to_bit, bytes_)))
 
 
 def mp3seek(bytes_):
@@ -49,3 +82,18 @@ def mp3_unpack_frame(bytes_):
     """
     bytes__ = frame = bytes(0)
     return (bytes__, frame)
+
+
+def mp3_parse_main_data(frame):
+    """Parses a logical frame into useful data
+
+    """
+    mp3data = bytes(0)
+    return mp3data
+
+if __name__ == '__main__':
+    file = open('test.mp3', 'rb')
+    # This should create a bytes immutable object
+    bytes_ = file.read()
+    # How long is the file?
+    print(len(bytes_))
